@@ -17,8 +17,11 @@ class Knapsack():
         self.size = size
         self.items = items
         self.optimal_val = optimal_val
+        self.population = []
+        self.pop_copy = []
 
     def initialize_population(self, pop_size=1000):
+        self.population = []
         # self.population = [[random.randint(0, 1) for _ in range(
         #     self.number_items)] for __ in range(pop_size)]
         for _ in range(pop_size):
