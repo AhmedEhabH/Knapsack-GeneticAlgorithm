@@ -20,7 +20,7 @@ class Knapsack():
         self.population = []
         self.pop_copy = []
 
-    def initialize_population(self, pop_size=1000):
+    def initialize_population(self, pop_size=500):
         self.population = []
         # self.population = [[random.randint(0, 1) for _ in range(
         #     self.number_items)] for __ in range(pop_size)]
@@ -94,7 +94,7 @@ class Knapsack():
         iteration = 0
         cromosome = []
         profits = []
-        while (self.my_optimal != self.optimal_val) and iteration < 5000:
+        while (self.my_optimal != self.optimal_val) and iteration < 1000:
             iteration += 1
             # Step 2 - Fitness
             fitness = self.calc_fitness(self.items)
