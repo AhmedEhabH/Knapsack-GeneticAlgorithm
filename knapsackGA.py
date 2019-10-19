@@ -90,7 +90,7 @@ class Knapsack():
 
     def run(self):
         # Step 1 - initialize population
-        self.initialize_population()
+        self.initialize_population(1000)
         iteration = 0
         cromosome = []
         profits = []
