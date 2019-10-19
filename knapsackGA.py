@@ -36,13 +36,13 @@ class Knapsack():
         self.pop_copy = self.population.copy()
 
     def calc_fitness(self, items):
-        fitness = [0] * len(self.population)
-        for i in range(len(self.population)):
+        fitness = [0] * len(self.pop_copy)
+        for i in range(len(self.pop_copy)):
             value = 0
             weight = 0
             for j in range(self.number_items):
-                weight += self.population[i][j] * items[j][0]
-                value += self.population[i][j] * items[j][1]
+                weight += self.pop_copy[i][j] * items[j][0]
+                value += self.pop_copy[i][j] * items[j][1]
                 if weight <= self.size:
                     fitness[i] = value
         return fitness
@@ -80,11 +80,11 @@ class Knapsack():
         return [i for _, i in sorted(zip(fitness, selection))]
 
     def calc_profit(self, items):
-        profits = [0] * len(self.population)
+        profits = [0] * len(self.pop_copy)
         for i in range(len(self.pop_copy)):
             value = 0
             for j in range(self.number_items):
-                value += self.population[i][j] * items[j][1]
+                value += self.pop_copy[i][j] * items[j][1]
             profits[i] = value
         return profits
 
