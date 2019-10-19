@@ -94,7 +94,7 @@ class Knapsack():
         iteration = 0
         cromosome = []
         profits = []
-        while iteration < self.number_items*100 or self.my_optimal < self.optimal_val:
+        while self.my_optimal < self.optimal_val:
             iteration += 1
             # Step 2 - Fitness
             fitness = self.calc_fitness(self.items)
