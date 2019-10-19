@@ -63,7 +63,7 @@ class Knapsack():
         return selection
 
     def crossover(self, item1, item2):
-        r1 = random.randint(1, self.number_items-1)  # Crossover point
+        r1 = random.randint(1, self.number_items - 1)  # Crossover point
         crossover_probability = .7
         r2 = random.uniform(0, 1)
         if r2 <= crossover_probability:
