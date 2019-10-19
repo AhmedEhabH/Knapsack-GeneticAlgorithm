@@ -90,7 +90,7 @@ class Knapsack():
 
     def run(self):
         # Step 1 - initialize population
-        self.initialize_population(1000)
+        self.initialize_population(5000)
         iteration = 0
         no_change = 0
         cromosome = []
@@ -124,12 +124,13 @@ class Knapsack():
             cromosome = self.pop_copy[index]
             if self.population == self.pop_copy:
                 no_change += 1
-            if no_change > 2: break
+                if no_change > 5 and iteration > 100: break
+                continue
+            else: no_change = 0
             self.population = self.pop_copy.copy()
         print("Optimal after {0} iteration(s).".format(iteration))
         print("Optimal from knapsack GA", self.my_optimal)
-        [print(self.items[i])
-         for i in range(len(cromosome)) if cromosome[i] == 1]
+        [print("{0} - {1}".format(self.items[i][0], self.items[i][1])) for i in range(len(cromosome)) if cromosome[i] == 1]
 
 
 def main(number_items, size_knapsack, items):
@@ -139,6 +140,3 @@ def main(number_items, size_knapsack, items):
     print("The optimal value from normal knapsack = ", optimal_val)
     Knapsack_obj = Knapsack(number_items, size_knapsack, items, optimal_val)
     Knapsack_obj.run()
-
-
-# main(50, 908, [[4, 286], [36, 239], [35, 591], [16, 784], [40, 244], [35, 546], [4, 769], [26, 93], [4, 598], [24, 500], [23, 273], [50, 846], [33, 882], [10, 347], [40, 592], [30, 527], [10, 623], [16, 288], [15, 68], [25, 599], [32, 595], [2, 592], [45, 336], [2, 99], [40, 64], [44, 135], [23, 261], [3, 53], [14, 203], [40, 279], [28, 628], [4, 392], [42, 162], [23, 109], [46, 116], [37, 248], [38, 46], [2, 406], [28, 912], [27, 784], [5, 335], [46, 536], [50, 394], [21, 893], [36, 657], [28, 168], [35, 200], [23, 88], [35, 599], [20, 299]])
