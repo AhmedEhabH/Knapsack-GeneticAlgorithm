@@ -29,7 +29,7 @@ class Knapsack():
             j = 0
             while j < self.number_items:
                 rand_num = random.randint(0, 1)
-                if random.uniform(0, 1) >= .5:
+                if random.uniform(0, 1) < .5:
                     cromosome.append(rand_num)
                     j += 1
             self.population.append(cromosome)
@@ -94,7 +94,7 @@ class Knapsack():
         iteration = 0
         cromosome = []
         profits = []
-        while (self.my_optimal != self.optimal_val) and iteration < 1000 or self.my_optimal < self.optimal_val:
+        while iteration < 6000 and self.my_optimal < self.optimal_val:
             iteration += 1
             # Step 2 - Fitness
             fitness = self.calc_fitness(self.items)
