@@ -18,7 +18,7 @@ class Knapsack():
         self.items = items
         self.optimal_val = optimal_val
 
-    def initialize_population(self, pop_size=1000):
+    def initialize_population(self, pop_size=5000):
         self.population = [[random.randint(0, 1) for _ in range(
             self.number_items)] for __ in range(pop_size)]
         self.pop_copy = self.population.copy()
@@ -82,7 +82,7 @@ class Knapsack():
         iteration = 0
         cromosome = []
         profits = []
-        while (self.my_optimal != self.optimal_val):
+        while (self.my_optimal != self.optimal_val) and iteration <= 5000:
             iteration += 1
             # Step 2 - Fitness
             fitness = self.calc_fitness(self.items)
@@ -105,12 +105,9 @@ class Knapsack():
 
             # Step 6 - Calculate profits
             profits = self.calc_profit(self.items)
-            if self.optimal_val in profits:
-                self.my_optimal = self.optimal_val
-                # self.my_optimal = max(profits)
-                index = profits.index(self.my_optimal)
-                cromosome = self.pop_copy[index]
-
+            self.my_optimal = self.optimal_val if self.optimal_val in profits else max(profits)
+            index = profits.index(self.my_optimal)
+            cromosome = self.pop_copy[index]
             self.population = self.pop_copy.copy()
         print("Optimal after {0} iteration(s).".format(iteration))
         print("Optimal from knapsack GA", self.my_optimal)
