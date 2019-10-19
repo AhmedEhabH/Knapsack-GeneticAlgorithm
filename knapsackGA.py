@@ -124,7 +124,7 @@ class Knapsack():
             cromosome = self.pop_copy[index]
             if self.population == self.pop_copy:
                 no_change += 1
-                if no_change > 5 and iteration > 100: break
+                if no_change > 5 and iteration > 500: break
                 continue
             else: no_change = 0
             self.population = self.pop_copy.copy()
