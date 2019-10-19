@@ -92,6 +92,7 @@ class Knapsack():
         # Step 1 - initialize population
         self.initialize_population(1000)
         iteration = 0
+        no_change = 0
         cromosome = []
         profits = []
         while self.my_optimal < self.optimal_val:
@@ -121,7 +122,9 @@ class Knapsack():
                 profits)
             index = profits.index(self.my_optimal)
             cromosome = self.pop_copy[index]
-            if self.population == self.pop_copy and iteration != 1: break
+            if self.population == self.pop_copy:
+                no_change += 1
+            if no_change > 2: break
             self.population = self.pop_copy.copy()
         print("Optimal after {0} iteration(s).".format(iteration))
         print("Optimal from knapsack GA", self.my_optimal)
