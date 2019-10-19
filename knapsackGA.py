@@ -121,6 +121,7 @@ class Knapsack():
                 profits)
             index = profits.index(self.my_optimal)
             cromosome = self.pop_copy[index]
+            if self.population == self.pop_copy: break
             self.population = self.pop_copy.copy()
         print("Optimal after {0} iteration(s).".format(iteration))
         print("Optimal from knapsack GA", self.my_optimal)
