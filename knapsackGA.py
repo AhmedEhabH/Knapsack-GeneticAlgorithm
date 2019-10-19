@@ -18,9 +18,18 @@ class Knapsack():
         self.items = items
         self.optimal_val = optimal_val
 
-    def initialize_population(self, pop_size=5000):
-        self.population = [[random.randint(0, 1) for _ in range(
-            self.number_items)] for __ in range(pop_size)]
+    def initialize_population(self, pop_size=1000):
+        # self.population = [[random.randint(0, 1) for _ in range(
+        #     self.number_items)] for __ in range(pop_size)]
+        for _ in range(pop_size):
+            cromosome = []
+            j = 0
+            while j < self.number_items:
+                rand_num = random.randint(0, 1)
+                if random.uniform(0, 1) >= .5:
+                    cromosome.append(rand_num)
+                    j += 1
+            self.population.append(cromosome)
         self.pop_copy = self.population.copy()
 
     def calc_fitness(self, items):
@@ -53,14 +62,14 @@ class Knapsack():
     def crossover(self, item1, item2):
         r1 = random.randint(1, self.number_items-1)  # Crossover point
         crossover_probability = .7
-        r2 = random.random()
+        r2 = random.uniform(0, 1)
         if r2 <= crossover_probability:
             item1[r1:], item2[r1:] = item2[r1:], item1[r1:]
         return item1, item2
 
     def mutation(self, item):
         for i in range(len(item)):
-            if(random.random() <= .1):
+            if(random.uniform(0, 1) <= .1):
                 item[i] = 1 if item[i] == 0 else 0
         return item
 
@@ -78,7 +87,7 @@ class Knapsack():
 
     def run(self):
         # Step 1 - initialize population
-        self.initialize_population()
+        self.initialize_population(5000)
         iteration = 0
         cromosome = []
         profits = []
@@ -105,13 +114,15 @@ class Knapsack():
 
             # Step 6 - Calculate profits
             profits = self.calc_profit(self.items)
-            self.my_optimal = self.optimal_val if self.optimal_val in profits else max(profits)
+            self.my_optimal = self.optimal_val if self.optimal_val in profits else max(
+                profits)
             index = profits.index(self.my_optimal)
             cromosome = self.pop_copy[index]
             self.population = self.pop_copy.copy()
         print("Optimal after {0} iteration(s).".format(iteration))
         print("Optimal from knapsack GA", self.my_optimal)
-        [print(self.items[i]) for i in range(len(cromosome)) if cromosome[i] == 1]
+        [print(self.items[i])
+         for i in range(len(cromosome)) if cromosome[i] == 1]
 
 
 def main(number_items, size_knapsack, items):
