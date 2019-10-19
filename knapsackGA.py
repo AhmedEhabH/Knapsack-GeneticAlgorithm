@@ -1,6 +1,6 @@
 import random
 import numpy as np
-import knapsackNormal
+import knapsackDP
 
 
 class Knapsack():
@@ -131,7 +131,7 @@ class Knapsack():
 def main(number_items, size_knapsack, items):
     wt = [i[0] for i in items]
     val = [i[1] for i in items]
-    optimal_val = knapsackNormal.knapSack(size_knapsack, wt, val, len(val))
+    optimal_val = knapsackDP.knapSack(size_knapsack, wt, val, len(val))
     print("The optimal value from normal knapsack = ", optimal_val)
     Knapsack_obj = Knapsack(number_items, size_knapsack, items, optimal_val)
     Knapsack_obj.run()
