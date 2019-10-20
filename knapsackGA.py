@@ -90,13 +90,13 @@ class Knapsack():
 
     def run(self):
         # Step 1 - initialize population
-        self.initialize_population(self.number_items * 25)
+        self.initialize_population(self.number_items * 100)
         iteration = 0
         no_change = 0
         small_iteration = 0
         cromosome = []
         profits = []
-        while self.max_optimal < self.optimal_val or iteration < 1000:
+        while self.max_optimal < self.optimal_val or iteration < 500:
             iteration += 1
             small_iteration += 1
             # Step 2 - Fitness
