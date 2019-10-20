@@ -35,14 +35,14 @@ class Knapsack():
             self.population.append(cromosome)
         self.pop_copy = self.population.copy()
 
-    def calc_fitness(self, items):
-        fitness = [0] * len(self.pop_copy)
-        for i in range(len(self.pop_copy)):
+    def calc_fitness(self, pop, items):
+        fitness = [0] * len(pop)
+        for i in range(len(pop)):
             value = 0
             weight = 0
             for j in range(self.number_items):
-                weight += self.pop_copy[i][j] * items[j][0]
-                value += self.pop_copy[i][j] * items[j][1]
+                weight += pop[i][j] * items[j][0]
+                value += pop[i][j] * items[j][1]
                 if weight <= self.size:
                     fitness[i] = value
         return fitness
@@ -76,8 +76,11 @@ class Knapsack():
                 item[i] = 1 if item[i] == 0 else 0
         return item
 
-    def sort_according_to_fitness(self, fitness, selection):
-        return [i for _, i in sorted(zip(fitness, selection))]
+    # def sort_according_to_fitness(self, fitness, selection):
+    #     return [i for _, i in sorted(zip(fitness, selection))]
+
+    def sort_according_to_fitness(self, fitness, target):
+        return [i for _, i in sorted(zip(fitness, target))]
 
     def run(self):
         # Step 1 - initialize population
@@ -91,7 +94,7 @@ class Knapsack():
             iteration += 1
             small_iteration += 1
             # Step 2 - Fitness
-            fitness = self.calc_fitness(self.items)
+            fitness = self.calc_fitness(self.pop_copy, self.items)
 
             # Step 3 - Selection
             roulette_wheel = self.create_roulette_wheel(fitness)
@@ -110,7 +113,7 @@ class Knapsack():
                     self.pop_copy[sorted_selection[i]])
 
             # Step 6 - Calculate profits
-            profits = self.calc_fitness(self.items)
+            profits = self.calc_fitness(self.pop_copy, self.items)
             self.my_optimal = max(profits)
             change = False
             if self.max_optimal < self.max_optimal : 
@@ -121,14 +124,17 @@ class Knapsack():
             if change: self.best_items = cromosome
             if self.population == self.pop_copy:
                 no_change += 1
-                if no_change > 10: 
-                    for i in range(len(self.pop_copy)):
-                        self.pop_copy[i] = self.mutation(self.pop_copy[i])
+                if no_change > 10: break
                 continue
             else: 
                 no_change = 0
                 small_iteration = 0
-            self.population = self.pop_copy.copy()
+            fitness = self.calc_fitness(self.population, self.items)
+            self.population = self.sort_according_to_fitness(fitness, self.population)
+            fitness = self.calc_fitness(self.pop_copy, self.items)
+            self.pop_copy = self.sort_according_to_fitness(fitness, self.pop_copy)
+            
+            self.population[len(self.population)/2 : ], self.pop_copy[len(self.pop_copy)/2 : ] = self.pop_copy[len(self.pop_copy)/2 : ], self.population[len(self.population)/2 : ]
         print("Optimal after {0} iteration(s).".format(iteration))
         print("Optimal from knapsack GA", self.max_optimal)
         value_sum = 0
