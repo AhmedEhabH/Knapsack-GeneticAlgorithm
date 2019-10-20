@@ -11,6 +11,8 @@ class Knapsack():
     items = []
     optimal_val = -1
     my_optimal = 0
+    max_optimal = 0
+    best_items = []
 
     def __init__(self, number_items, size, items, optimal_val):
         self.number_items = number_items
@@ -88,13 +90,13 @@ class Knapsack():
 
     def run(self):
         # Step 1 - initialize population
-        self.initialize_population(self.number_items * 1000)
+        self.initialize_population(self.number_items * 25)
         iteration = 0
         no_change = 0
         small_iteration = 0
         cromosome = []
         profits = []
-        while self.my_optimal < self.optimal_val or iteration < 5000:
+        while self.max_optimal < self.optimal_val or iteration < 1000:
             iteration += 1
             small_iteration += 1
             # Step 2 - Fitness
@@ -118,14 +120,17 @@ class Knapsack():
 
             # Step 6 - Calculate profits
             profits = self.calc_profit(self.items)
-            self.my_optimal = self.optimal_val if self.optimal_val in profits else max(
-                profits)
+            self.my_optimal = self.optimal_val if self.optimal_val in profits else max(profits)
+            change = False
+            if self.max_optimal < self.max_optimal : 
+                self.max_optimal = self.my_optimal
+                change = True
             index = profits.index(self.my_optimal)
             cromosome = self.pop_copy[index]
-            
+            if change: self.best_items = cromosome
             if self.population == self.pop_copy:
                 no_change += 1
-                if no_change > 3: break
+                if no_change > 10: break
                 continue
             else: 
                 no_change = 0
