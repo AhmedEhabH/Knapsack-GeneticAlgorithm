@@ -79,15 +79,6 @@ class Knapsack():
     def sort_according_to_fitness(self, fitness, selection):
         return [i for _, i in sorted(zip(fitness, selection))]
 
-    def calc_profit(self, items):
-        profits = [0] * len(self.pop_copy)
-        for i in range(len(self.pop_copy)):
-            value = 0
-            for j in range(self.number_items):
-                value += self.pop_copy[i][j] * items[j][1]
-            profits[i] = value
-        return profits
-
     def run(self):
         # Step 1 - initialize population
         self.initialize_population(self.number_items * 10)
@@ -119,7 +110,7 @@ class Knapsack():
                     self.pop_copy[sorted_selection[i]])
 
             # Step 6 - Calculate profits
-            profits = self.calc_profit(self.items)
+            profits = self.calc_fitness(self.items)
             self.my_optimal = max(profits)
             change = False
             if self.max_optimal < self.max_optimal : 
@@ -137,9 +128,16 @@ class Knapsack():
                 small_iteration = 0
             self.population = self.pop_copy.copy()
         print("Optimal after {0} iteration(s).".format(iteration))
-        print("Optimal from knapsack GA", self.my_optimal)
-        [print("{0} - {1}".format(self.items[i][0], self.items[i][1])) for i in range(len(cromosome)) if cromosome[i] == 1]
-        return self.my_optimal
+        print("Optimal from knapsack GA", self.max_optimal)
+        value_sum = 0
+        weight_sum = 0
+        for i in range(len(self.best_items)):
+            if self.best_items[i] == 1:
+                weight_sum += self.items[i][0]
+                value_sum += self.items[i][1]
+        print("{0} - {1}".format(weight_sum, value_sum))
+        [print("{0} - {1}".format(self.items[i][0], self.items[i][1])) for i in range(len(self.best_items)) if self.best_items[i] == 1]
+        return self.max_optimal
 
 def main(number_items, size_knapsack, items):
     wt = [i[0] for i in items]
