@@ -121,7 +121,9 @@ class Knapsack():
             if change: self.best_items = cromosome
             if self.population == self.pop_copy:
                 no_change += 1
-                if no_change > 10: break
+                if no_change > 10: 
+                    for i in range(len(self.pop_copy)):
+                        self.pop_copy[i] = self.mutation(self.pop_copy[i])
                 continue
             else: 
                 no_change = 0
