@@ -145,7 +145,7 @@ def main(number_items, size_knapsack, items):
     wt = [i[0] for i in items]
     val = [i[1] for i in items]
     optimal_val = knapsackDP.knapSack(size_knapsack, wt, val, len(val))
-    print("The optimal value from normal knapsack = ", optimal_val)
+    print("The optimal value from normal knapsack = {0} with size = {1}".format(optimal_val, size_knapsack))
     Knapsack_obj = Knapsack(number_items, size_knapsack, items, optimal_val)
     my_optimal = Knapsack_obj.run()
     if my_optimal < optimal_val: print('*' * 50)
