@@ -22,8 +22,6 @@ class Knapsack():
 
     def initialize_population(self, pop_size=500):
         self.population = []
-        # self.population = [[random.randint(0, 1) for _ in range(
-        #     self.number_items)] for __ in range(pop_size)]
         for _ in range(pop_size):
             cromosome = []
             j = 0
@@ -55,7 +53,7 @@ class Knapsack():
         rand_num = 0
         selection = []
         for _ in range(len(roulette_wheel)):
-            rand_num = random.randint(0, len(roulette_wheel)-1)
+            rand_num = random.randint(0, roulette_wheel[-1])
             for i in range(len(roulette_wheel)):
                 if rand_num <= roulette_wheel[i]:
                     selection.append(i)
