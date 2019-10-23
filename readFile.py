@@ -1,4 +1,5 @@
 import re
+import gc
 
 
 test_cases = 0
@@ -27,8 +28,15 @@ def read_all(filename):
             weight, value = item.split()
             items_set.append([int(weight), int(value)])
         items.append(items_set)
+    gc.collect()
     return test_cases, numbers_items, sizes, items
 
 # test_cases, numbers_items, sizes, items = read_all("input_example.txt")
 # # print(items)
 # print(items[len(items)-1])
+# test_cases, numbers_items, sizes, items = read_all("input_example.txt")
+# print(test_cases)
+# for i in range(test_cases):
+#     print(numbers_items[i])
+#     print(sizes[i])
+#     print(items[i])

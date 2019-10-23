@@ -1,58 +1,55 @@
 import random
 import numpy as np
 import knapsackDP
+import gc
 
 
-class Knapsack():
+class Knapsack:
     number_items = 0
-    size = 0
-    population = []
-    pop_copy = []
+    capacity = 0
     items = []
-    optimal_val = -1
+    population = []
+    population_copy = []
     my_optimal = 0
-    max_optimal = 0
+    optimal_val = 0
+    max_optimal = -1
     best_items = []
 
-    def __init__(self, number_items, size, items, optimal_val):
+    def __init__(self, number_items, capacity, items, optimal_val):
         self.number_items = number_items
-        self.size = size
+        self.capacity = capacity
         self.items = items
         self.optimal_val = optimal_val
-        self.population = []
-        self.pop_copy = []
+        self.max_optimal = -1
+        self.best_items = []
 
-    def initialize_population(self, pop_size=500):
+    def initialize_population(self, population_size=100):
         self.population = []
-        for _ in range(pop_size):
-            cromosome = []
-            j = 0
-            while j < self.number_items:
-                rand_num = random.randint(0, 1)
-                if random.random() < .5:
-                    cromosome.append(rand_num)
-                    j += 1
-            self.population.append(cromosome)
-        self.pop_copy = self.population.copy()
+        i = 0
+        while i < population_size:
+            cromosome = [random.randint(0, 1) for i in range(self.number_items)]
+            if random.uniform(0, 1) < .5:
+                i += 1
+                self.population.append(cromosome)
+        self.population_copy = self.population.copy()
 
-    def calc_fitness(self, pop, items):
-        fitness = [0] * len(pop)
-        for i in range(len(pop)):
+    def calculate_fitness(self, population):
+        fitness = [0] * len(population)
+        for i in range(len(population)):
             value = 0
             weight = 0
             for j in range(self.number_items):
-                weight += pop[i][j] * items[j][0]
-                value += pop[i][j] * items[j][1]
-                if weight <= self.size:
+                weight += population[i][j] * self.items[j][0]
+                value += population[i][j] * self.items[j][1]
+                if weight <= self.capacity:
                     fitness[i] = value
-        return fitness
+        return fitness.copy()
 
     def create_roulette_wheel(self, fitness):
         roulette_wheel = list(np.cumsum(fitness))
-        return roulette_wheel
+        return roulette_wheel.copy()
 
     def select_items(self, roulette_wheel):
-        rand_num = 0
         selection = []
         for _ in range(len(roulette_wheel)):
             rand_num = random.randint(0, roulette_wheel[-1])
@@ -60,99 +57,123 @@ class Knapsack():
                 if rand_num <= roulette_wheel[i]:
                     selection.append(i)
                     break
-        return selection
+        return selection.copy()
 
-    def crossover(self, item1, item2):
-        r1 = random.randint(1, self.number_items - 1)  # Crossover point
-        crossover_probability = .7
+    def crossover(self, cromosome1, cromosome2):
+        r1 = random.randint(1, self.number_items - 1)
         r2 = random.uniform(0, 1)
-        if r2 <= crossover_probability:
-            item1[r1:], item2[r1:] = item2[r1:], item1[r1:]
-        return item1, item2
+        if r2 <= .7:
+            cromosome1[r1:], cromosome2[r1:] = cromosome2[r1:], cromosome1[r1:]
+        return cromosome1.copy(), cromosome2.copy()
 
-    def mutation(self, item):
-        for i in range(len(item)):
-            if(random.uniform(0, 1) <= .1):
-                item[i] = 1 if item[i] == 0 else 0
-        return item
+    def mutation(self, population):
+        for i in range(len(population)):
+            population[i] = self.mutation_cromosome(population[i])
+        return population.copy()
 
-    # def sort_according_to_fitness(self, fitness, selection):
-    #     return [i for _, i in sorted(zip(fitness, selection))]
+    def mutation_cromosome(self, cromosome):
+        for i in range(self.number_items):
+            if random.random() <= .1:
+                cromosome[i] = 1 if cromosome[i] == 0 else 0
+        return cromosome.copy()
 
+    # Ascending
     def sort_according_to_fitness(self, fitness, target):
-        return [i for _, i in sorted(zip(fitness, target))]
+        return [i for _, i in sorted(zip(fitness, target))].copy()
+
+    def replacement(self, pop1, pop2):
+        fitness_pop2 = self.calculate_fitness(pop2)
+        fitness_pop1 = self.calculate_fitness(pop1)
+        
+        pop2 = self.sort_according_to_fitness(fitness_pop2, pop2)
+        pop1 = self.sort_according_to_fitness(fitness_pop1, pop1)
+        gc.collect()
+        return pop2[len(pop2) // 2:].copy(), pop1[len(pop1) // 2:].copy()
 
     def run(self):
         # Step 1 - initialize population
-        self.initialize_population(self.number_items * 100)
+        # print("Step #1 - initialize population")
+        population_size = self.number_items * ((self.number_items - 1) // 2 + 1) if self.number_items <= 35 else (self.number_items - 10) * ((self.number_items - 1) // 2) * 5
+        iteration_size = self.number_items * ((self.number_items - 1) // 2 + 2) if self.number_items <= 35 else (population_size - 100) + int(.1 * population_size - 100) * 10
+        self.initialize_population(population_size)
         iteration = 0
-        no_change = 0
-        small_iteration = 0
-        cromosome = []
         profits = []
-        while iteration < self.number_items * 100:
+        while iteration < iteration_size:
             iteration += 1
-            small_iteration += 1
+            # print("Iteration #{}".format(iteration))
+
             # Step 2 - Fitness
-            fitness = self.calc_fitness(self.pop_copy, self.items)
+            # print("Step #2 - Fitness")
+            fitness = self.calculate_fitness(self.population_copy)
 
             # Step 3 - Selection
+            # print("Step #3 - Selection")
             roulette_wheel = self.create_roulette_wheel(fitness)
             selection = self.select_items(roulette_wheel)
 
             # Step 4 - Crossover
-            sorted_selection = self.sort_according_to_fitness(
-                fitness, selection)
-            for i in range(1, len(sorted_selection), 2):
-                self.pop_copy[sorted_selection[i-1]], self.pop_copy[sorted_selection[i]] = self.crossover(
-                    self.pop_copy[sorted_selection[i-1]], self.pop_copy[sorted_selection[i]])
-
-            # Step 5 - Mutation
-            for i in range(len(sorted_selection)):
-                self.pop_copy[sorted_selection[i]] = self.mutation(
-                    self.pop_copy[sorted_selection[i]])
-
-            # Step 6 - Calculate profits
-            profits = self.calc_fitness(self.pop_copy, self.items)
-            self.my_optimal = max(profits)
-            change = False
-            if self.max_optimal < self.max_optimal : 
-                self.max_optimal = self.my_optimal
-                change = True
-            index = profits.index(self.my_optimal)
-            cromosome = self.pop_copy[index]
-            if change: self.best_items = cromosome
-            if self.population == self.pop_copy:
-                no_change += 1
-                if no_change > 10: break
-                continue
-            else: 
-                no_change = 0
-                small_iteration = 0
-            fitness = self.calc_fitness(self.population, self.items)
-            self.population = self.sort_according_to_fitness(fitness, self.population)
-            fitness = self.calc_fitness(self.pop_copy, self.items)
-            self.pop_copy = self.sort_according_to_fitness(fitness, self.pop_copy)
+            # print("Step #4 - Crossover")
+            new_generation = [self.population_copy[i].copy() for i in selection]
             
-            self.population[len(self.population)/2 : ], self.pop_copy[len(self.pop_copy)/2 : ] = self.pop_copy[len(self.pop_copy)/2 : ], self.population[len(self.population)/2 : ]
-        print("Optimal after {0} iteration(s).".format(iteration))
-        print("Optimal from knapsack GA", self.max_optimal)
+            fitness_new_gen = self.calculate_fitness(new_generation) 
+            new_generation = self.sort_according_to_fitness(fitness_new_gen, new_generation)
+
+            fitness_population_copy = self.calculate_fitness(self.population_copy)
+            self.population_copy = self.sort_according_to_fitness(fitness_population_copy, self.population_copy)
+
+            self.population_copy[:len(self.population_copy) // 2] = new_generation[len(new_generation) // 2:]
+
+            for i in range(1, len(self.population_copy), 2):
+                self.population_copy[i - 1], self.population_copy[i] = self.crossover(self.population_copy[i], self.population_copy[i-1])
+            random.shuffle(self.population_copy)
+            
+            # Step 5 - Mutation
+            # print("Step #5 - Mutation")
+            self.population_copy = self.mutation(self.population_copy)
+            
+            # Step 6 - Calculate profits
+            profits = self.calculate_fitness(self.population_copy)
+            self.my_optimal = max(profits)
+
+            if self.my_optimal > self.max_optimal: 
+                self.max_optimal = self.my_optimal
+                index = profits.index(self.max_optimal)
+                self.best_items = self.population_copy[index].copy()
+                
+
+
+            # Step 7 - try to avoid no change
+            if self.population == self.population_copy:
+                self.population_copy = self.mutation(self.population_copy)
+
+            self.population_copy[:len(self.population_copy) // 2], self.population[:len(self.population) // 2] = self.replacement(self.population_copy, self.population)
+            gc.collect()
+        # print("Optimal after {0} iteration(s).".format(iteration))
+        print("Optimal from knapsack GA:", self.max_optimal)
+        # print("Best Items:")
+        # print(self.best_items)
         value_sum = 0
         weight_sum = 0
         for i in range(len(self.best_items)):
-            if self.best_items[i] == 1:
-                weight_sum += self.items[i][0]
-                value_sum += self.items[i][1]
-        print("{0} - {1}".format(weight_sum, value_sum))
+                weight_sum += (self.items[i][0] * self.best_items[i])
+                value_sum += (self.items[i][1] * self.best_items[i])
+        # print("{0} => {1}".format(weight_sum, value_sum))
+        # print(self.best_items)
         [print("{0} - {1}".format(self.items[i][0], self.items[i][1])) for i in range(len(self.best_items)) if self.best_items[i] == 1]
-        return self.max_optimal
+        if self.max_optimal < self.optimal_val: print("*" * 50)
+        else: print("=" * 50)
+
 
 def main(number_items, size_knapsack, items):
     wt = [i[0] for i in items]
     val = [i[1] for i in items]
     optimal_val = knapsackDP.knapSack(size_knapsack, wt, val, len(val))
-    print("The optimal value from normal knapsack = {0} with size = {1}".format(optimal_val, size_knapsack))
+    print("The optimal value from normal knapsack = {0} with wight = {1} by {2} items".format(optimal_val, size_knapsack, len(items)))
+    # print("Items:")
+    # print(items)
     Knapsack_obj = Knapsack(number_items, size_knapsack, items, optimal_val)
-    my_optimal = Knapsack_obj.run()
-    if my_optimal < optimal_val: print('*' * 50)
-    else: print('=' * 50)
+    Knapsack_obj.run()
+
+# main(3, 10, [[4, 4], [7, 6], [5,3]])
+# main(5, 14, [[4, 1], [7, 7], [1, 22], [3, 23], [3, 6]])
+# main(5, 28, [[10, 27], [9, 27], [8, 12], [8, 28], [3, 23]])
