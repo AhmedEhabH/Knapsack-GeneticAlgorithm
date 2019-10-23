@@ -93,8 +93,8 @@ class Knapsack:
     def run(self):
         # Step 1 - initialize population
         # print("Step #1 - initialize population")
-        population_size = self.number_items * ((self.number_items - 1) // 2 + 1) if self.number_items <= 35 else (self.number_items - 10) * ((self.number_items - 1) // 2) * 5
-        iteration_size = self.number_items * ((self.number_items - 1) // 2 + 2) if self.number_items <= 35 else (population_size - 100) + int(.1 * population_size - 100) * 10
+        population_size = self.number_items * ((self.number_items) // 2 + 1) if self.number_items <= 35 else (self.number_items - 10) * ((self.number_items - 1) // 2) * 5
+        iteration_size = population_size * 10 if self.number_items <= 35 else (population_size) + int(.1 * (population_size - 50)) * 10
         self.initialize_population(population_size)
         iteration = 0
         profits = []
