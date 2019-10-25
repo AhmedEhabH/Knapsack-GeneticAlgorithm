@@ -104,7 +104,7 @@ class Knapsack:
             iteration_size = 100
         else:
             population_size = self.number_items * 2
-            iteration_size = 100 * self.number_items
+            iteration_size = 30 * population_size
         self.initialize_population(population_size)
         iteration = 0
         profits = []
@@ -138,17 +138,9 @@ class Knapsack:
                 index = profits.index(self.max_optimal)
                 self.best_items = self.population_copy[index].copy()
                 
-
-
             # Step 7 - try to avoid no change
             if self.population == self.population_copy:
                 self.population_copy = self.mutation(self.population_copy)
-
-            # pop_fit = self.calculate_fitness(self.population)
-            # cpop_fit = self.calculate_fitness(self.population_copy)
-
-            # self.population = self.sort_according_to_fitness(pop_fit, self.population)
-            # self.population_copy = self.sort_according_to_fitness(cpop_fit, self.population_copy)
 
             self.population_copy, self.population = self.replacement(self.population_copy, self.population)
             gc.collect()
