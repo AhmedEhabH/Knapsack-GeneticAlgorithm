@@ -88,13 +88,12 @@ class Knapsack:
         pop2 = self.sort_according_to_fitness(fitness_pop2, pop2)
         pop1 = self.sort_according_to_fitness(fitness_pop1, pop1)
         gc.collect()
-        return pop2[len(pop2) // 2:].copy(), pop1[len(pop1) // 2:].copy()
+        div = len(pop1) // 2
+        pop1[:div], pop2[:div] = pop2[div:].copy(), pop1[div:].copy()
+        return pop1, pop2
 
     def run(self):
         # Step 1 - initialize population
-        # print("Step #1 - initialize population")
-        # population_size = (self.number_items * ((self.number_items))) * 5 if self.number_items <= 35 else ((self.number_items) ** 3) * 50
-        # iteration_size = self.number_items if self.number_items <= 35 else population_size // 2
         population_size = 0
         iteration_size = 0
         if self.number_items < 25:
@@ -106,39 +105,25 @@ class Knapsack:
         else:
             population_size = self.number_items * 2
             iteration_size = 100 * self.number_items
-        # population_size = self.number_items * 20
-        # iteration_size = 100
         self.initialize_population(population_size)
         iteration = 0
         profits = []
         while iteration < iteration_size:
             iteration += 1
-            # print("Iteration #{}".format(iteration))
-
             # Step 2 - Fitness
-            # print("Step #2 - Fitness")
             fitness = self.calculate_fitness(self.population_copy)
 
             # Step 3 - Selection
-            # print("Step #3 - Selection")
             roulette_wheel = self.create_roulette_wheel(fitness)
             selection = self.select_items(roulette_wheel)
 
             # Step 4 - Crossover
-            # print("Step #4 - Crossover")
             new_generation = [self.population_copy[i].copy() for i in selection]
-            
-            # fitness_new_gen = self.calculate_fitness(new_generation) 
-            # new_generation = self.sort_according_to_fitness(fitness_new_gen, new_generation)
-
-            # fitness_population_copy = self.calculate_fitness(self.population_copy)
-            # self.population_copy = self.sort_according_to_fitness(fitness_population_copy, self.population_copy)
 
             self.population_copy[:len(self.population_copy) // 2] = new_generation[len(new_generation) // 2:]
 
             for i in range(1, len(self.population_copy), 2):
                 self.population_copy[i - 1], self.population_copy[i] = self.crossover(self.population_copy[i], self.population_copy[i-1])
-            # random.shuffle(self.population_copy)
             
             # Step 5 - Mutation
             # print("Step #5 - Mutation")
@@ -159,25 +144,16 @@ class Knapsack:
             if self.population == self.population_copy:
                 self.population_copy = self.mutation(self.population_copy)
 
-            pop_fit = self.calculate_fitness(self.population)
-            cpop_fit = self.calculate_fitness(self.population_copy)
+            # pop_fit = self.calculate_fitness(self.population)
+            # cpop_fit = self.calculate_fitness(self.population_copy)
 
-            self.population = self.sort_according_to_fitness(pop_fit, self.population)
-            self.population_copy = self.sort_according_to_fitness(cpop_fit, self.population_copy)
+            # self.population = self.sort_according_to_fitness(pop_fit, self.population)
+            # self.population_copy = self.sort_according_to_fitness(cpop_fit, self.population_copy)
 
-            self.population_copy[:len(self.population_copy) // 2], self.population[:len(self.population) // 2] = self.replacement(self.population_copy, self.population)
+            self.population_copy, self.population = self.replacement(self.population_copy, self.population)
             gc.collect()
-        # print("Optimal after {0} iteration(s).".format(iteration))
+        
         print("Optimal from knapsack GA:", self.max_optimal)
-        # print("Best Items:")
-        # print(self.best_items)
-        value_sum = 0
-        weight_sum = 0
-        for i in range(len(self.best_items)):
-                weight_sum += (self.items[i][0] * self.best_items[i])
-                value_sum += (self.items[i][1] * self.best_items[i])
-        # print("{0} => {1}".format(weight_sum, value_sum))
-        # print(self.best_items)
         [print("{0} - {1}".format(self.items[i][0], self.items[i][1])) for i in range(len(self.best_items)) if self.best_items[i] == 1]
         if self.max_optimal < self.optimal_val: print("*" * 50)
         else: print("=" * 50)
@@ -187,9 +163,6 @@ def main(number_items, size_knapsack, items):
     wt = [i[0] for i in items]
     val = [i[1] for i in items]
     optimal_val = knapsackDP.knapSack(size_knapsack, wt, val, len(val))
-    print("The optimal value from normal knapsack = {0} with weight = {1} by {2} items".format(optimal_val, size_knapsack, len(items)))
-    # print("Items:")
-    # print(items)
     Knapsack_obj = Knapsack(number_items, size_knapsack, items, optimal_val)
     Knapsack_obj.run()
 
