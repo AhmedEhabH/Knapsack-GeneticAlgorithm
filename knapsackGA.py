@@ -27,8 +27,8 @@ class Knapsack:
         self.population = []
         i = 0
         while i < population_size:
-            cromosome = [random.randint(0, 1) for i in range(self.number_items)]
             if random.uniform(0, 1) < .5:
+                cromosome = [random.randint(0, 1) for i in range(self.number_items)]
                 i += 1
                 self.population.append(cromosome)
         self.population_copy = self.population.copy()
@@ -60,9 +60,9 @@ class Knapsack:
         return selection.copy()
 
     def crossover(self, cromosome1, cromosome2):
-        r1 = random.randint(1, self.number_items - 1)
         r2 = random.uniform(0, 1)
         if r2 <= .7:
+            r1 = random.randint(1, self.number_items - 1)
             cromosome1[r1:], cromosome2[r1:] = cromosome2[r1:], cromosome1[r1:]
         return cromosome1.copy(), cromosome2.copy()
 
@@ -93,8 +93,24 @@ class Knapsack:
     def run(self):
         # Step 1 - initialize population
         # print("Step #1 - initialize population")
-        population_size = self.number_items * ((self.number_items) // 2 + 1) if self.number_items <= 35 else (self.number_items - 10) * ((self.number_items - 1) // 2) * 5
-        iteration_size = population_size * 10 if self.number_items <= 35 else (population_size) + int(.1 * (population_size - 50)) * 10
+        # population_size = (self.number_items * ((self.number_items))) * 5 if self.number_items <= 35 else ((self.number_items) ** 3) * 50
+        # iteration_size = self.number_items if self.number_items <= 35 else population_size // 2
+        population_size = 0
+        iteration_size = 0
+        if self.number_items < 10:
+            population_size = self.number_items * 2
+            iteration_size = 100
+        elif self.number_items < 20:
+            population_size = self.number_items * 20
+            iteration_size = 100
+        elif self.number_items < 30:
+            population_size = self.number_items * 25
+            iteration_size = 100
+        else:
+            population_size = self.number_items * 100
+            iteration_size = 100
+        # population_size = self.number_items * 20
+        # iteration_size = 100
         self.initialize_population(population_size)
         iteration = 0
         profits = []
@@ -168,7 +184,7 @@ def main(number_items, size_knapsack, items):
     wt = [i[0] for i in items]
     val = [i[1] for i in items]
     optimal_val = knapsackDP.knapSack(size_knapsack, wt, val, len(val))
-    print("The optimal value from normal knapsack = {0} with wight = {1} by {2} items".format(optimal_val, size_knapsack, len(items)))
+    print("The optimal value from normal knapsack = {0} with weight = {1} by {2} items".format(optimal_val, size_knapsack, len(items)))
     # print("Items:")
     # print(items)
     Knapsack_obj = Knapsack(number_items, size_knapsack, items, optimal_val)
