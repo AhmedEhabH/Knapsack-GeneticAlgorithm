@@ -97,15 +97,12 @@ class Knapsack:
         # iteration_size = self.number_items if self.number_items <= 35 else population_size // 2
         population_size = 0
         iteration_size = 0
-        if self.number_items < 20:
-            population_size = self.number_items * 2
-            iteration_size = 100
-        elif self.number_items <= 30:
-            population_size = self.number_items * 50
-            iteration_size = 75
-        elif self.number_items <= 50:
-            population_size = self.number_items * 100
+        if self.number_items < 25:
+            population_size = self.number_items * 25
             iteration_size = 50
+        elif self.number_items < 50:
+            population_size = self.number_items * 30
+            iteration_size = 75
         else:
             population_size = self.number_items * 100
             iteration_size = 100
@@ -131,17 +128,17 @@ class Knapsack:
             # print("Step #4 - Crossover")
             new_generation = [self.population_copy[i].copy() for i in selection]
             
-            fitness_new_gen = self.calculate_fitness(new_generation) 
-            new_generation = self.sort_according_to_fitness(fitness_new_gen, new_generation)
+            # fitness_new_gen = self.calculate_fitness(new_generation) 
+            # new_generation = self.sort_according_to_fitness(fitness_new_gen, new_generation)
 
-            fitness_population_copy = self.calculate_fitness(self.population_copy)
-            self.population_copy = self.sort_according_to_fitness(fitness_population_copy, self.population_copy)
+            # fitness_population_copy = self.calculate_fitness(self.population_copy)
+            # self.population_copy = self.sort_according_to_fitness(fitness_population_copy, self.population_copy)
 
             self.population_copy[:len(self.population_copy) // 2] = new_generation[len(new_generation) // 2:]
 
             for i in range(1, len(self.population_copy), 2):
                 self.population_copy[i - 1], self.population_copy[i] = self.crossover(self.population_copy[i], self.population_copy[i-1])
-            random.shuffle(self.population_copy)
+            # random.shuffle(self.population_copy)
             
             # Step 5 - Mutation
             # print("Step #5 - Mutation")
@@ -161,6 +158,12 @@ class Knapsack:
             # Step 7 - try to avoid no change
             if self.population == self.population_copy:
                 self.population_copy = self.mutation(self.population_copy)
+
+            pop_fit = self.calculate_fitness(self.population)
+            cpop_fit = self.calculate_fitness(self.population_copy)
+
+            self.population = self.sort_according_to_fitness(pop_fit, self.population)
+            self.population_copy = self.sort_according_to_fitness(cpop_fit, self.population_copy)
 
             self.population_copy[:len(self.population_copy) // 2], self.population[:len(self.population) // 2] = self.replacement(self.population_copy, self.population)
             gc.collect()
