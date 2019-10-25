@@ -97,14 +97,14 @@ class Knapsack:
         # iteration_size = self.number_items if self.number_items <= 35 else population_size // 2
         population_size = 0
         iteration_size = 0
-        if self.number_items < 10:
+        if self.number_items <= 10:
             population_size = self.number_items * 2
             iteration_size = 100
-        elif self.number_items < 20:
+        elif self.number_items <= 30:
             population_size = self.number_items * 20
             iteration_size = 100
-        elif self.number_items < 30:
-            population_size = self.number_items * 25
+        elif self.number_items <= 50:
+            population_size = self.number_items * 50
             iteration_size = 100
         else:
             population_size = self.number_items * 100
