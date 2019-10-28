@@ -2,6 +2,7 @@ import random
 import numpy as np
 import knapsackDP
 import gc
+import time
 
 
 class Knapsack:
@@ -103,11 +104,11 @@ class Knapsack:
             population_size = self.number_items * 25
             iteration_size = 50
         elif self.number_items < 50:
-            population_size = self.number_items * 30
-            iteration_size = 75
+            population_size = self.number_items * 25
+            iteration_size = 70
         else:
             population_size = self.number_items * 3
-            iteration_size = 30 * self.number_items
+            iteration_size = 21 * self.number_items
         self.initialize_population(population_size)
         iteration = 0
         profits = []
@@ -155,12 +156,16 @@ class Knapsack:
 
 
 def main(number_items, size_knapsack, items):
+    print("Started:", time.ctime())
     wt = [i[0] for i in items]
     val = [i[1] for i in items]
     optimal_val = knapsackDP.knapSack(size_knapsack, wt, val, len(val))
     Knapsack_obj = Knapsack(number_items, size_knapsack, items, optimal_val)
     Knapsack_obj.run()
+    print("Ended:", time.ctime())
 
 # main(3, 10, [[4, 4], [7, 6], [5,3]])
 # main(5, 14, [[4, 1], [7, 7], [1, 22], [3, 23], [3, 6]])
 # main(5, 28, [[10, 27], [9, 27], [8, 12], [8, 28], [3, 23]])
+# main(50, 886, [[50, 788], [50, 310], [17, 158], [28, 687], [16, 148], [48, 590], [21, 212], [36, 722], [9, 535], [49, 703], [33, 206], [49, 696], [20, 42], [35, 885], [47, 797], [19, 827], [8, 398], [31, 191], [36, 160], [17, 847], [44, 825], [32, 456], [1, 40], [8, 147], [37, 542], [31, 456], [13, 857], [30, 166], [6, 814], [25, 507], [20, 724], [8, 700], [22, 415], [38, 595], [24, 659], [29, 881], [22, 364], [32, 106], [4, 659], [35, 221], [18, 413], [32, 58], [4, 825], [3, 360], [30, 200], [4, 272], [31, 111], [50, 863], [4, 728], [8, 62]])
+# main(50, 908, [[4, 286], [36, 239], [35, 591], [16, 784], [40, 244], [35, 546], [4, 769], [26, 93], [4, 598], [24, 500], [23, 273], [50, 846], [33, 882], [10, 347], [40, 592], [30, 527], [10, 623], [16, 288], [15, 68], [25, 599], [32, 595], [2, 592], [45, 336], [2, 99], [40, 64], [44, 135], [23, 261], [3, 53], [14, 203], [40, 279], [28, 628], [4, 392], [42, 162], [23, 109], [46, 116], [37, 248], [38, 46], [2, 406], [28, 912], [27, 784], [5, 335], [46, 536], [50, 394], [21, 893], [36, 657], [28, 168], [35, 200], [23, 88], [35, 599], [20, 299]])

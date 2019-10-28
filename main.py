@@ -16,8 +16,6 @@ for i in range(test_cases):
     # print(size_knapsack)
     # print(items)
     print("Case: ", i + 1)
-    print("Started:", time.ctime())
     knapsackGA.main(number_items, size_knapsack, items)
     gc.collect()
-    print("Ended:", time.ctime())
 print("End time:", time.ctime())
