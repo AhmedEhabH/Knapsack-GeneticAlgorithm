@@ -108,7 +108,7 @@ class Knapsack:
             iteration_size = 70
         else:
             population_size = self.number_items * 3
-            iteration_size = 21 * self.number_items
+            iteration_size = 22 * self.number_items
         self.initialize_population(population_size)
         iteration = 0
         profits = []
